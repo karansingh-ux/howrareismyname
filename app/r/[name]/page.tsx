@@ -15,10 +15,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const result = await calculateNameRarity(decodedName);
   const displayName = formatDisplayName(decodedName);
 
+  const regionLabel = result.region === 'US' ? 'in the US' : result.region === 'EU' ? 'in Europe' : result.region === 'GLOBAL' ? 'Worldwide' : 'in India';
+
   if (!result.found) {
     return {
-      title: `${displayName} - Indian Name Rarity`,
-      description: `Check how common or rare the name ${displayName} is in India based on official electoral dataset records.`
+      title: `${displayName} - Name Rarity Check`,
+      description: `Check how common or rare the name ${displayName} is across official demographic and census records.`
     };
   }
 
@@ -27,17 +29,17 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   return {
     title: `${result.name} - ${result.rarityLabel} (${oneInStr}) | How Rare Is My Name?`,
-    description: `${result.name} ranks ${rankStr} in our national Indian name dataset. ${result.displayStatistic}`,
+    description: `${result.name} ranks ${rankStr} (${regionLabel}). ${result.displayStatistic}`,
     openGraph: {
-      title: `${result.name}: ${result.rarityLabel} in India`,
+      title: `${result.name}: ${result.rarityLabel} (${oneInStr})`,
       description: `${result.displayStatistic} (Rank ${rankStr}). Find out how rare your name is:`,
       siteName: 'How Rare Is My Name?',
       type: 'website'
     },
     twitter: {
       card: 'summary_large_image',
-      title: `${result.name}: ${result.rarityLabel} in India`,
-      description: `${result.displayStatistic} Find out yours:`
+      title: `${result.name}: ${result.rarityLabel} (${oneInStr})`,
+      description: `${result.displayStatistic} Check yours:`
     }
   };
 }

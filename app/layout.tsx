@@ -19,30 +19,47 @@ export const viewport: Viewport = {
   maximumScale: 5,
 };
 
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL
+  || (process.env.VERCEL_PROJECT_PRODUCTION_URL ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}` : null)
+  || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null)
+  || 'https://checknamerarity.vercel.app';
+
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://howrareismyname.in'),
-  title: "How Rare Is My Name? — Indian Name Rarity",
-  description: "Find out how common your first name is in India. Empirical, data-backed rarity statistics based on 475.5 million official voter registration records across 31 Indian states.",
+  metadataBase: new URL(siteUrl),
+  title: "How Rare Is My Name? — Global & Regional Name Rarity",
+  description: "Find out your exact name odds and statistical rarity across India, the US, Europe, and 180+ countries. Backed by 1+ billion official demographic records.",
   keywords: [
-    "Indian name rarity",
-    "how common is my name",
     "how rare is my name",
-    "name popularity in India",
-    "Indian names statistics",
-    "name rank India"
+    "name rarity calculator",
+    "how common is my name",
+    "name popularity rank",
+    "global name rarity",
+    "Indian name rarity",
+    "US name rarity",
+    "name odds"
   ],
-  authors: [{ name: "Name Rarity" }],
+  authors: [{ name: "Karan Singh", url: "https://www.instagram.com/karansinghh.ai/" }],
+  creator: "Karan Singh",
   openGraph: {
-    title: "How Rare Is My Name? — Indian Name Rarity",
-    description: "Enter your first name and find out how common it is in India, backed by 475.5M official records.",
+    title: "How Rare Is My Name? — Global & Regional Name Rarity",
+    description: "Find out your exact name odds across India, the United States, Europe, and 180+ countries. Tested against 1B+ official demographic records.",
     siteName: "How Rare Is My Name?",
     type: "website",
-    locale: "en_IN",
+    locale: "en_US",
+    images: [
+      {
+        url: '/opengraph-image',
+        width: 1200,
+        height: 630,
+        alt: 'How Rare Is My Name? — Global & Regional Name Rarity'
+      }
+    ]
   },
   twitter: {
     card: "summary_large_image",
-    title: "How Rare Is My Name? — Indian Name Rarity",
-    description: "Enter your first name and find out how common it is in India."
+    title: "How Rare Is My Name? — Global & Regional Name Rarity",
+    description: "Find out your exact name odds across India, the United States, Europe, and 180+ countries. Tested against 1B+ official demographic records.",
+    images: ['/opengraph-image']
   }
 };
 
