@@ -48,7 +48,7 @@ export const metadata: Metadata = {
     locale: "en_US",
     images: [
       {
-        url: '/opengraph-image',
+        url: 'https://checknamerarity.vercel.app/og-image.png',
         width: 1200,
         height: 630,
         alt: 'How Rare Is My Name? — Global & Regional Name Rarity'
@@ -59,7 +59,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "How Rare Is My Name? — Global & Regional Name Rarity",
     description: "Find out your exact name odds across India, the United States, Europe, and 180+ countries. Tested against 1B+ official demographic records.",
-    images: ['/opengraph-image']
+    images: ['https://checknamerarity.vercel.app/og-image.png']
   }
 };
 

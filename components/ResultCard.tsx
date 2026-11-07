@@ -264,10 +264,17 @@ export default function ResultCard({ result, onReset, sessionId }: ResultCardPro
           const minorityPercent = isMale ? f : m;
           const dominantGender = isMale ? 'Male' : 'Female';
           const minorityGender = isMale ? 'Female' : 'Male';
+
+          // When sample size is small (< 100), give transparent sample context
+          const isSmallSample = typeof result.count === 'number' && result.count > 0 && result.count < 100;
+          const subtext = isSmallSample
+            ? `Sample: ${result.count} voters (${result.genderBreakdown?.maleCount ?? m}M / ${result.genderBreakdown?.femaleCount ?? f}F)`
+            : `${minorityPercent}% ${minorityGender} crowd`;
+
           return {
             stat: `${dominantPercent}%`,
             tag: dominantGender,
-            subtext: `${minorityPercent}% ${minorityGender} crowd`
+            subtext
           };
         })() : null;
 

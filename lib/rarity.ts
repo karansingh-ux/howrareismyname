@@ -174,9 +174,9 @@ export function getDatasetLeaderboard(): DatasetLeaderboard {
 
 export function normalizeInputName(raw: string): string {
   if (!raw) return '';
-  return raw
+  const firstWord = raw.trim().split(/\s+/)[0] || '';
+  return firstWord
     .normalize('NFC')
-    .trim()
     .toLowerCase()
     .replace(/[^a-z]/g, '');
 }
@@ -194,7 +194,7 @@ export function canonicalKey(str: string): string {
 }
 
 export function formatDisplayName(raw: string): string {
-  const trimmed = raw.trim();
+  const trimmed = raw.trim().split(/\s+/)[0] || '';
   if (!trimmed) return '';
   return trimmed.charAt(0).toUpperCase() + trimmed.slice(1).toLowerCase();
 }
@@ -608,7 +608,7 @@ export async function calculateNameRarity(input: string, region: Region = 'IN'):
     confidenceLevel: 'high',
     etymology: (await etymologyPromise) || undefined,
     displayStatistic: `Fewer than 1 in 15,000,000 people have this exact name. You're genuinely 1-of-1.`,
-    rankStatement: `Not found among 772M+ registered voters. A certified 1-of-1 rarity.`,
+    rankStatement: `Estimated top 0.01% tier nationwide (1-of-1 rarity).`,
     explanation: `Your name is so unique that it doesn't appear in the national voter registry. You possess an extraordinarily rare identifier.`,
     source: sourceMetadata
   };
