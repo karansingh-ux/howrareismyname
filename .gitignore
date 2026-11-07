@@ -39,3 +39,11 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# SQLite databases for runtime user data
+data/subscribers.db*
+data/analytics.db*
+data/test_subscribers.db*
+*.db-wal
+*.db-shm
+*.log

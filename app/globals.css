@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
+  --background: transparent;
   --foreground: #171717;
 }
 
@@ -12,15 +12,98 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+body {
+  background-color: #5c9df6;
+  color: var(--foreground);
+  font-family: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* Crisp text shadows to guarantee legibility on any background gradient */
+.text-contrast-white {
+  color: #ffffff;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.45), 0 2px 8px rgba(0, 0, 0, 0.35);
+}
+
+.text-contrast-subtle {
+  color: rgba(255, 255, 255, 0.95);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35), 0 2px 6px rgba(0, 0, 0, 0.25);
+}
+
+.text-contrast-dim {
+  color: rgba(255, 255, 255, 0.9);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+/* ==========================================================================
+   Typographic Scale & Hierarchy (Retro-Modern Magazine Aesthetic)
+   ========================================================================== */
+
+/* Hero Title (h1): 650 (Semi-Bold), clamp(32px, 7.5vw, 76px), responsive line-height and letter-spacing */
+.type-hero {
+  font-weight: 650;
+  font-size: clamp(32px, 7.5vw, 76px);
+  letter-spacing: -0.055em;
+  line-height: 1.06;
+}
+
+/* Rarity Ranking (#rank): 580, clamp(40px, 8.5vw, 74px), tabular nums */
+.type-rank {
+  font-weight: 580;
+  font-size: clamp(40px, 8.5vw, 74px);
+  letter-spacing: -0.055em;
+  line-height: 1.04;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Big Numbers / Stats: 600 (Bold), clamp(22px, 4.5vw, 44px), tabular nums */
+.type-stat-number {
+  font-weight: 600;
+  font-size: clamp(22px, 4.5vw, 44px);
+  letter-spacing: -0.045em;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Secondary Metric Card / Grid Tile Stat: 600 (Bold), clamp(17px, 2.2vw, 24px), tabular nums */
+.type-tile-stat {
+  font-weight: 600;
+  font-size: clamp(17px, 2.2vw, 24px);
+  letter-spacing: -0.035em;
+  line-height: 1.15;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Section Headings (h2): 600, clamp(22px, 3.6vw, 32px), line-height 1.18 */
+.type-heading-2 {
+  font-weight: 600;
+  font-size: clamp(22px, 3.6vw, 32px);
+  letter-spacing: -0.04em;
+  line-height: 1.18;
+}
+
+/* Primary Search / Reel Input: 600, responsive sizing, clean letter-spacing */
+.type-input-prominent {
+  font-weight: 600;
+  font-size: clamp(18px, 4.5vw, 32px);
+  letter-spacing: -0.03em;
+  line-height: 1.25;
+}
+
+/* Eyebrows & Tags: 600, 11px to 12px, +0.08em (wide) letter spacing, uppercase */
+.type-eyebrow {
+  font-weight: 600;
+  font-size: 11.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* Body & Paragraphs: 400 to 500 (Regular), 14px to 17px, Normal letter spacing, line-height 1.6 */
+.type-body {
+  font-weight: 450;
+  font-size: clamp(14px, 1.8vw, 16px);
+  letter-spacing: normal;
+  line-height: 1.6;
 }

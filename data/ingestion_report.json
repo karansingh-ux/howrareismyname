@@ -1,0 +1,93 @@
+{
+  "status": "success",
+  "total_records": 772194503,
+  "total_unique_names": 267122,
+  "source": "Indian Electoral Rolls (Harvard Dataverse)",
+  "source_doi": "doi:10.7910/DVN/WZGJBM",
+  "source_url": "https://doi.org/10.7910/DVN/WZGJBM",
+  "authors": "Gaurav Sood, Rajashekar Chintalapati, Suriyan Laohaprapanon",
+  "dataset_year": "1887 to 2017",
+  "license": "CC0-1.0 Universal (Public Domain Dedication)",
+  "geography": "31 Indian States and Union Territories",
+  "methodology": "Empirical aggregation of verified voter registration records across 31 Indian states and union territories from official state election rolls.",
+  "confidence_level": "high",
+  "rarity_tiers_distribution": {
+    "VERY COMMON": 1000,
+    "COMMON": 14000,
+    "MODERATELY COMMON": 45000,
+    "UNCOMMON": 90000,
+    "RARE": 117122
+  },
+  "sample_benchmarks": {
+    "dhwani": [
+      "dhwani",
+      "Dhwani",
+      "dhvani",
+      97901,
+      144,
+      136,
+      8,
+      1.8648151397161656e-07,
+      5362462,
+      "UNCOMMON",
+      94.4,
+      5.6
+    ],
+    "kunal": [
+      "kunal",
+      "Kunal",
+      "kunal",
+      3488,
+      32123,
+      286,
+      31837,
+      4.15996227313211e-05,
+      24039,
+      "COMMON",
+      0.9,
+      99.1
+    ],
+    "ananya": [
+      "ananya",
+      "Ananya",
+      "ananya",
+      32694,
+      2135,
+      1847,
+      288,
+      2.764847446731954e-06,
+      361684,
+      "MODERATELY COMMON",
+      86.5,
+      13.5
+    ],
+    "arav": [
+      "arav",
+      "Arav",
+      "arav",
+      79183,
+      274,
+      43,
+      231,
+      3.5483288075154817e-07,
+      2818228,
+      "UNCOMMON",
+      15.7,
+      84.3
+    ],
+    "top_1": [
+      "rama",
+      "Rama",
+      "rama",
+      1,
+      3386383,
+      686208,
+      2700175,
+      0.0043854015883871165,
+      228,
+      "VERY COMMON",
+      20.3,
+      79.7
+    ]
+  }
+}

@@ -1,21 +1,27 @@
 {
-  "name": "app-scaffold",
+  "name": "how-rare-is-my-name",
   "version": "0.1.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "test": "node --test tests/run_tests.mjs"
   },
   "dependencies": {
+    "better-sqlite3": "^13.0.3",
+    "motion": "^13.2.0",
     "next": "16.3.5",
+    "nodemailer": "^10.0.9",
     "react": "19.2.8",
     "react-dom": "19.2.8"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
+    "@types/better-sqlite3": "^9.6.0",
     "@types/node": "^20",
+    "@types/nodemailer": "^8.0.1",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
