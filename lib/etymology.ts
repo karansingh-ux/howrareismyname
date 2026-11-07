@@ -1,5 +1,6 @@
 import Database from 'better-sqlite3';
 import path from 'path';
+import os from 'os';
 
 export interface NameEtymology {
   origin?: string;
@@ -11,20 +12,31 @@ let dbInstance: Database.Database | null = null;
 
 function getEtymologyDb(): Database.Database {
   if (!dbInstance) {
-    const dbPath = path.resolve(process.cwd(), 'data/names_dynamic.db');
-    dbInstance = new Database(dbPath);
-    dbInstance.pragma('journal_mode = WAL');
-    dbInstance.exec(`
-      CREATE TABLE IF NOT EXISTS name_etymologies (
-        normalized_name TEXT PRIMARY KEY,
-        display_name TEXT NOT NULL,
-        origin TEXT,
-        meaning TEXT,
-        source TEXT NOT NULL,
-        created_at TEXT NOT NULL
-      );
-      CREATE INDEX IF NOT EXISTS idx_etym_norm ON name_etymologies(normalized_name);
-    `);
+    try {
+      const dbPath = process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME
+        ? path.join(os.tmpdir(), 'names_etymology.db')
+        : path.resolve(process.cwd(), 'data/names_dynamic.db');
+      dbInstance = new Database(dbPath);
+      dbInstance.pragma('journal_mode = WAL');
+    } catch {
+      dbInstance = new Database(':memory:');
+    }
+
+    try {
+      dbInstance.exec(`
+        CREATE TABLE IF NOT EXISTS name_etymologies (
+          normalized_name TEXT PRIMARY KEY,
+          display_name TEXT NOT NULL,
+          origin TEXT,
+          meaning TEXT,
+          source TEXT NOT NULL,
+          created_at TEXT NOT NULL
+        );
+        CREATE INDEX IF NOT EXISTS idx_etym_norm ON name_etymologies(normalized_name);
+      `);
+    } catch (e) {
+      console.warn('Etymology DB initialization warning:', e);
+    }
   }
   return dbInstance;
 }

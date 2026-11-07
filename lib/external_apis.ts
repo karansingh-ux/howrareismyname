@@ -1,5 +1,6 @@
 import Database from 'better-sqlite3';
 import path from 'path';
+import os from 'os';
 
 export interface ExternalNameResult {
   found: boolean;
@@ -48,25 +49,36 @@ let cacheDb: Database.Database | null = null;
 
 function getCacheDb(): Database.Database {
   if (!cacheDb) {
-    const dbPath = path.resolve(process.cwd(), 'data/names_dynamic.db');
-    cacheDb = new Database(dbPath);
-    cacheDb.pragma('journal_mode = WAL');
-    cacheDb.exec(`
-      CREATE TABLE IF NOT EXISTS dynamic_names (
-        normalized_name TEXT PRIMARY KEY,
-        display_name TEXT NOT NULL,
-        global_count INTEGER NOT NULL,
-        top_countries TEXT NOT NULL,
-        gender TEXT,
-        gender_probability REAL,
-        origin_description TEXT,
-        rarity_label TEXT NOT NULL,
-        one_in_x INTEGER NOT NULL,
-        source TEXT NOT NULL,
-        created_at TEXT NOT NULL
-      );
-      CREATE INDEX IF NOT EXISTS idx_dyn_name ON dynamic_names(normalized_name);
-    `);
+    try {
+      const dbPath = process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME
+        ? path.join(os.tmpdir(), 'names_dynamic.db')
+        : path.resolve(process.cwd(), 'data/names_dynamic.db');
+      cacheDb = new Database(dbPath);
+      cacheDb.pragma('journal_mode = WAL');
+    } catch {
+      cacheDb = new Database(':memory:');
+    }
+
+    try {
+      cacheDb.exec(`
+        CREATE TABLE IF NOT EXISTS dynamic_names (
+          normalized_name TEXT PRIMARY KEY,
+          display_name TEXT NOT NULL,
+          global_count INTEGER NOT NULL,
+          top_countries TEXT NOT NULL,
+          gender TEXT,
+          gender_probability REAL,
+          origin_description TEXT,
+          rarity_label TEXT NOT NULL,
+          one_in_x INTEGER NOT NULL,
+          source TEXT NOT NULL,
+          created_at TEXT NOT NULL
+        );
+        CREATE INDEX IF NOT EXISTS idx_dyn_name ON dynamic_names(normalized_name);
+      `);
+    } catch (e) {
+      console.warn('Cache DB initialization warning:', e);
+    }
   }
   return cacheDb;
 }

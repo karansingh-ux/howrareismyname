@@ -1,5 +1,6 @@
 import Database from 'better-sqlite3';
 import path from 'path';
+import os from 'os';
 
 export type AnalyticsEventName =
   | 'landing_page_view'
@@ -15,20 +16,31 @@ let analyticsDbInstance: Database.Database | null = null;
 
 function getAnalyticsDb(): Database.Database {
   if (!analyticsDbInstance) {
-    const dbPath = path.resolve(process.cwd(), 'data/analytics.db');
-    analyticsDbInstance = new Database(dbPath);
-    analyticsDbInstance.pragma('journal_mode = WAL');
-    analyticsDbInstance.exec(`
-      CREATE TABLE IF NOT EXISTS analytics_events (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        event_name TEXT NOT NULL,
-        anonymous_session_id TEXT,
-        metadata_json TEXT,
-        created_at TEXT NOT NULL
-      );
-      CREATE INDEX IF NOT EXISTS idx_analytics_event ON analytics_events(event_name);
-      CREATE INDEX IF NOT EXISTS idx_analytics_date ON analytics_events(created_at);
-    `);
+    try {
+      const dbPath = process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME
+        ? path.join(os.tmpdir(), 'analytics.db')
+        : path.resolve(process.cwd(), 'data/analytics.db');
+      analyticsDbInstance = new Database(dbPath);
+      analyticsDbInstance.pragma('journal_mode = WAL');
+    } catch {
+      analyticsDbInstance = new Database(':memory:');
+    }
+
+    try {
+      analyticsDbInstance.exec(`
+        CREATE TABLE IF NOT EXISTS analytics_events (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          event_name TEXT NOT NULL,
+          anonymous_session_id TEXT,
+          metadata_json TEXT,
+          created_at TEXT NOT NULL
+        );
+        CREATE INDEX IF NOT EXISTS idx_analytics_event ON analytics_events(event_name);
+        CREATE INDEX IF NOT EXISTS idx_analytics_date ON analytics_events(created_at);
+      `);
+    } catch (e) {
+      console.warn('Analytics DB initialization warning:', e);
+    }
   }
   return analyticsDbInstance;
 }

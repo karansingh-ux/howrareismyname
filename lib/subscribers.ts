@@ -1,6 +1,7 @@
 import Database from 'better-sqlite3';
 import path from 'path';
 import crypto from 'crypto';
+import os from 'os';
 
 export interface Subscriber {
   id: number;
@@ -18,26 +19,36 @@ let subDbInstance: Database.Database | null = null;
 
 function getSubscriberDb(): Database.Database {
   if (!subDbInstance) {
-    const dbPath = path.resolve(process.cwd(), 'data/subscribers.db');
-    subDbInstance = new Database(dbPath);
-    subDbInstance.pragma('journal_mode = WAL');
-    
-    // Initialize table if it doesn't exist
-    subDbInstance.exec(`
-      CREATE TABLE IF NOT EXISTS subscribers (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        email TEXT UNIQUE NOT NULL,
-        name_entered TEXT NOT NULL,
-        normalized_name TEXT NOT NULL,
-        result_rank INTEGER,
-        marketing_consent INTEGER NOT NULL DEFAULT 0,
-        consent_timestamp TEXT,
-        unsubscribe_token TEXT UNIQUE NOT NULL,
-        created_at TEXT NOT NULL
-      );
-      CREATE INDEX IF NOT EXISTS idx_subscribers_email ON subscribers(email);
-      CREATE INDEX IF NOT EXISTS idx_subscribers_token ON subscribers(unsubscribe_token);
-    `);
+    try {
+      const dbPath = process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME
+        ? path.join(os.tmpdir(), 'subscribers.db')
+        : path.resolve(process.cwd(), 'data/subscribers.db');
+      subDbInstance = new Database(dbPath);
+      subDbInstance.pragma('journal_mode = WAL');
+    } catch {
+      subDbInstance = new Database(':memory:');
+    }
+
+    try {
+      // Initialize table if it doesn't exist
+      subDbInstance.exec(`
+        CREATE TABLE IF NOT EXISTS subscribers (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          email TEXT UNIQUE NOT NULL,
+          name_entered TEXT NOT NULL,
+          normalized_name TEXT NOT NULL,
+          result_rank INTEGER,
+          marketing_consent INTEGER NOT NULL DEFAULT 0,
+          consent_timestamp TEXT,
+          unsubscribe_token TEXT UNIQUE NOT NULL,
+          created_at TEXT NOT NULL
+        );
+        CREATE INDEX IF NOT EXISTS idx_subscribers_email ON subscribers(email);
+        CREATE INDEX IF NOT EXISTS idx_subscribers_token ON subscribers(unsubscribe_token);
+      `);
+    } catch (e) {
+      console.warn('Subscribers DB initialization warning:', e);
+    }
   }
   return subDbInstance;
 }
