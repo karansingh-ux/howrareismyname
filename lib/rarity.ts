@@ -214,7 +214,11 @@ export function generateTransliterationCandidates(norm: string): string[] {
     [/u/g, 'oo'],
     [/y/g, 'i'],
     [/i/g, 'ee'],
-    [/i/g, 'y'],
+    [/i/g, 'e'],
+    [/e/g, 'i'],
+    [/el$/g, 'al'],
+    [/al$/g, 'el'],
+    [/il$/g, 'al'],
     [/ai/g, 'e'],
     [/ai/g, 'ay'],
     [/c/g, 'k'],
@@ -229,6 +233,12 @@ export function generateTransliterationCandidates(norm: string): string[] {
     [/s/g, 'sh'],
     [/th/g, 't'],
     [/t/g, 'th'],
+    [/dh/g, 'd'],
+    [/d/g, 'dh'],
+    [/bh/g, 'b'],
+    [/b/g, 'bh'],
+    [/kh/g, 'k'],
+    [/gh/g, 'g'],
     [/x/g, 'ksh'],
     [/ksh/g, 'x'],
     [/([b-df-hj-np-tv-z])\1+/g, '$1']
@@ -598,8 +608,8 @@ export async function calculateNameRarity(input: string, region: Region = 'IN'):
     confidenceLevel: 'high',
     etymology: (await etymologyPromise) || undefined,
     displayStatistic: `Fewer than 1 in 15,000,000 people have this exact name. You're genuinely 1-of-1.`,
-    rankStatement: `${displayName} sits in the top 0.01% rarest tier on record.`,
-    explanation: `Certified shiny Pokémon. If someone else has your exact name, you're either related or they copied your homework. Zero duplicate usernames in your lifetime.`,
+    rankStatement: `Not found among 772M+ registered voters. A certified 1-of-1 rarity.`,
+    explanation: `Your name is so unique that it doesn't appear in the national voter registry. You possess an extraordinarily rare identifier.`,
     source: sourceMetadata
   };
 }
