@@ -72,7 +72,7 @@ export default async function SharedResultPage({ params }: Props) {
         {result.found ? (
           <ResultCard result={result} />
         ) : (
-          <UnknownNameCard name={decodedName} onReset={() => {}} />
+          <UnknownNameCard name={decodedName} />
         )}
       </main>
 

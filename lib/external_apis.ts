@@ -1,6 +1,7 @@
 import Database from 'better-sqlite3';
 import path from 'path';
 import os from 'os';
+import { transliterateToAscii } from './transliterate.ts';
 
 export interface ExternalNameResult {
   found: boolean;
@@ -84,7 +85,7 @@ function getCacheDb(): Database.Database {
 }
 
 export async function queryDynamicExternalSources(rawName: string): Promise<ExternalNameResult | null> {
-  const normalized = rawName.trim().toLowerCase().replace(/[^a-z]/g, '');
+  const normalized = transliterateToAscii(rawName);
   if (!normalized || normalized.length < 2) return null;
 
   const db = getCacheDb();
@@ -122,15 +123,15 @@ export async function queryDynamicExternalSources(rawName: string): Promise<Exte
   // 2. Query external APIs in parallel (Nationalize.io + Wikidata + Genderize)
   try {
     const nationalizePromise = fetch(`https://api.nationalize.io?name=${encodeURIComponent(normalized)}`, {
-      signal: AbortSignal.timeout(3500)
+      signal: AbortSignal.timeout(1200)
     }).then(r => r.ok ? r.json() : null).catch(() => null);
 
     const wikidataPromise = fetch(`https://www.wikidata.org/w/api.php?action=wbsearchentities&search=${encodeURIComponent(rawName)}&language=en&format=json&type=item&limit=3`, {
-      signal: AbortSignal.timeout(3500)
+      signal: AbortSignal.timeout(1200)
     }).then(r => r.ok ? r.json() : null).catch(() => null);
 
     const genderizePromise = fetch(`https://api.genderize.io?name=${encodeURIComponent(normalized)}`, {
-      signal: AbortSignal.timeout(3500)
+      signal: AbortSignal.timeout(1200)
     }).then(r => r.ok ? r.json() : null).catch(() => null);
 
     const [natData, wikiData, genData] = await Promise.all([

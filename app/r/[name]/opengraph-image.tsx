@@ -18,6 +18,8 @@ export default async function Image({ params }: { params: Promise<{ name: string
   const formattedOneIn = result.oneInX ? result.oneInX.toLocaleString('en-IN') : '15,000,000';
   const oddsText = result.isUltraRare ? '< 1 in 15,000,000' : `1 in ${formattedOneIn}`;
   const rankText = result.rank ? `#${result.rank.toLocaleString('en-IN')}` : 'Top 0.01%';
+  const nameText = result.name || displayName || 'Name Check';
+  const nameFontSize = nameText.length > 20 ? 44 : nameText.length > 12 ? 60 : 84;
 
   return new ImageResponse(
     (
@@ -80,16 +82,19 @@ export default async function Image({ params }: { params: Promise<{ name: string
         >
           <div
             style={{
-              fontSize: 84,
+              fontSize: nameFontSize,
               fontWeight: 800,
               letterSpacing: '-0.06em',
               textTransform: 'uppercase',
               color: '#0a0a0a',
               lineHeight: 1.05,
-              marginBottom: 16
+              marginBottom: 16,
+              textAlign: 'center',
+              maxWidth: 900,
+              overflow: 'hidden'
             }}
           >
-            {result.name || displayName}
+            {nameText}
           </div>
 
           <div

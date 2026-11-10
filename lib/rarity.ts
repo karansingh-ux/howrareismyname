@@ -3,6 +3,7 @@ import path from 'path';
 import { findBestMatch, jaroWinklerSimilarity } from './fuzzy.ts';
 import { queryDynamicExternalSources } from './external_apis.ts';
 import { getVerifiedNameEtymology, type NameEtymology } from './etymology.ts';
+import { transliterateToAscii, formatDisplayGivenName, extractGivenNameToken } from './transliterate.ts';
 
 export type Region = 'IN' | 'US' | 'EU' | 'GLOBAL';
 
@@ -174,11 +175,7 @@ export function getDatasetLeaderboard(): DatasetLeaderboard {
 
 export function normalizeInputName(raw: string): string {
   if (!raw) return '';
-  const firstWord = raw.trim().split(/\s+/)[0] || '';
-  return firstWord
-    .normalize('NFC')
-    .toLowerCase()
-    .replace(/[^a-z]/g, '');
+  return transliterateToAscii(raw);
 }
 
 export function canonicalKey(str: string): string {
@@ -194,9 +191,8 @@ export function canonicalKey(str: string): string {
 }
 
 export function formatDisplayName(raw: string): string {
-  const trimmed = raw.trim().split(/\s+/)[0] || '';
-  if (!trimmed) return '';
-  return trimmed.charAt(0).toUpperCase() + trimmed.slice(1).toLowerCase();
+  if (!raw) return '';
+  return formatDisplayGivenName(raw);
 }
 
 export function generateTransliterationCandidates(norm: string): string[] {
@@ -435,6 +431,22 @@ export async function calculateNameRarity(input: string, region: Region = 'IN'):
       row = candidateRow;
       if (candidateRow.normalized_name !== normalized) {
         matchedVariant = candidateRow.display_name;
+      }
+    }
+  }
+
+  // 4b. Compound or Hyphenated segment match (e.g. Mary-Jane -> Mary, Dev-Anand -> Dev, O'Connor -> Connor)
+  if (!row && (input.includes('-') || input.includes("'") || input.includes('’'))) {
+    const segments = input.split(/[-'’\s]+/).filter(Boolean);
+    for (const seg of segments) {
+      const segNorm = transliterateToAscii(seg);
+      if (segNorm && segNorm.length >= 3) {
+        const segRow = db.prepare(`SELECT * FROM ${tableName} WHERE normalized_name = ?`).get(segNorm) as DbRow | undefined;
+        if (segRow) {
+          row = segRow;
+          matchedVariant = segRow.display_name;
+          break;
+        }
       }
     }
   }
