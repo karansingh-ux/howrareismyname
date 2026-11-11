@@ -2,6 +2,7 @@ import React from 'react';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { calculateNameRarity, formatDisplayName } from '@/lib/rarity';
+import { logAnalyticsEvent } from '@/lib/analytics';
 import ResultCard from '@/components/ResultCard';
 import UnknownNameCard from '@/components/UnknownNameCard';
 
@@ -49,6 +50,12 @@ export default async function SharedResultPage({ params }: Props) {
   const decodedName = decodeURIComponent(name);
   const result = await calculateNameRarity(decodedName);
 
+  logAnalyticsEvent('shared_card_view', undefined, {
+    normalized_name: result.normalizedName,
+    rarity_label: result.rarityLabel,
+    region: result.region
+  });
+
   return (
     <div className="min-h-screen flex flex-col justify-between bg-transparent text-neutral-900 selection:bg-neutral-900 selection:text-white">
       {/* Header */}
@@ -90,6 +97,9 @@ export default async function SharedResultPage({ params }: Props) {
           </a>
         </p>
         <div className="flex items-center gap-4">
+          <Link href="/analytics" className="text-contrast-white hover:underline underline-offset-2 transition-all">
+            Analytics
+          </Link>
           <Link href="/methodology" className="text-contrast-white hover:underline underline-offset-2 transition-all">
             Methodology & Sources
           </Link>

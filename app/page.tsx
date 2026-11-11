@@ -181,6 +181,9 @@ export default function HomePage() {
           </a>
         </p>
         <div className="flex items-center gap-4">
+          <Link href="/analytics" className="text-contrast-white hover:underline underline-offset-2 transition-all">
+            Analytics
+          </Link>
           <Link href="/methodology" className="text-contrast-white hover:underline underline-offset-2 transition-all">
             Methodology & Sources
           </Link>

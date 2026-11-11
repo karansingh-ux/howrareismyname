@@ -59,7 +59,22 @@ export default function ResultCard({ result, onReset, sessionId }: ResultCardPro
   const twitterShareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(xPostText)}&url=${encodeURIComponent(shareUrl)}`;
   const linkedInShareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`;
 
+  const trackShare = (channel: string) => {
+    try {
+      fetch('/api/analytics', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          eventName: 'share_clicked',
+          sessionId,
+          metadata: { name: result.normalizedName, rank: result.rank, channel }
+        })
+      });
+    } catch {}
+  };
+
   const handleDownloadCard = async () => {
+    trackShare('story_card');
     try {
       await downloadRarityCardImage(result);
       setCardSaved(true);
@@ -70,6 +85,7 @@ export default function ResultCard({ result, onReset, sessionId }: ResultCardPro
   };
 
   const handleCopyCardImage = async () => {
+    trackShare('image_copy');
     try {
       const ok = await copyRarityCardImage(result);
       if (ok) {
@@ -89,6 +105,7 @@ export default function ResultCard({ result, onReset, sessionId }: ResultCardPro
 
   const handleLinkedInShare = async (e: React.MouseEvent) => {
     e.preventDefault();
+    trackShare('linkedin');
     const linkedInPost = result.isUltraRare
       ? `Turns out my name (${result.name}) is literally 1-of-1 (< 1 in 15M rarity)! Zero duplicates found out of 772M+ records. Check your name rarity: ${shareUrl}`
       : `Turns out my name (${result.name}) is 1 in ${formattedOneIn}! (${result.rarityLabel}). Tested against 772M+ official records. Check yours: ${shareUrl}`;
@@ -106,6 +123,7 @@ export default function ResultCard({ result, onReset, sessionId }: ResultCardPro
   };
 
   const handleInstagramShare = async () => {
+    trackShare('instagram');
     const igCaption = result.isUltraRare
       ? `🏷️ Name Check: ${result.name} is literally 1-of-1 (< 1 in 15M rarity)! Zero duplicates out of 772M+ verified records. How rare is yours? Check at ${shareUrl}`
       : `🏷️ Name Check: ${result.name} is ${result.rarityLabel} (1 in ${formattedOneIn})! Tested against 772M+ official records. How rare is yours? Check at ${shareUrl}`;
@@ -123,6 +141,7 @@ export default function ResultCard({ result, onReset, sessionId }: ResultCardPro
   };
 
   const handleWhatsAppShare = () => {
+    trackShare('whatsapp');
     const waText = result.isUltraRare
       ? `Turns out my name (${result.name}) is literally 1-of-1 (< 1 in 15M rarity)! Zero duplicates found in 772M+ records. Check yours: ${shareUrl}`
       : `Turns out my name (${result.name}) is 1 in ${formattedOneIn}! (${result.rarityLabel}). Tested against 772M+ official records. Check yours: ${shareUrl}`;
@@ -132,19 +151,7 @@ export default function ResultCard({ result, onReset, sessionId }: ResultCardPro
   };
 
   const handleShare = async () => {
-    try {
-      fetch('/api/analytics', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          eventName: 'share_clicked',
-          sessionId,
-          metadata: { name: result.normalizedName, rank: result.rank }
-        })
-      });
-    } catch {
-      // Non-blocking
-    }
+    trackShare('link_copy');
 
     if (typeof navigator !== 'undefined' && navigator.share) {
       try {
@@ -300,7 +307,7 @@ export default function ResultCard({ result, onReset, sessionId }: ResultCardPro
               <div>
                 <div className="type-eyebrow text-neutral-500">Crowd Share</div>
                 <div className="type-tile-stat text-neutral-950 mt-1 truncate">
-                  {result.isUltraRare ? '< 0.0001%' : (result.percentage !== undefined ? `${result.percentage}%` : '< 0.0001%')}
+                  {result.isUltraRare || !result.percentage || result.percentage < 0.0001 ? '< 0.0001%' : `${result.percentage}%`}
                 </div>
               </div>
               <div className="type-body text-[11px] sm:text-xs text-neutral-500 mt-1 sm:mt-1.5 truncate">
@@ -421,6 +428,7 @@ export default function ResultCard({ result, onReset, sessionId }: ResultCardPro
             target="_blank"
             rel="noopener noreferrer"
             onClick={async () => {
+              trackShare('twitter');
               try { await copyRarityCardImage(result); } catch {}
             }}
             className="py-2 px-1.5 bg-neutral-50 hover:bg-neutral-100 rounded-lg text-neutral-800 type-eyebrow text-[10px] flex flex-col items-center justify-center gap-1 transition-colors cursor-pointer"

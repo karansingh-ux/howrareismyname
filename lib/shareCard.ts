@@ -235,7 +235,7 @@ export function renderRarityCardCanvas(result: RarityResult): HTMLCanvasElement 
   ctx.textAlign = 'left';
   ctx.fillText('CROWD SHARE', rightTileX + 30, tileY + 45);
 
-  const crowdShareText = result.isUltraRare ? '< 0.0001%' : (result.percentage !== undefined ? `${result.percentage}%` : '< 0.0001%');
+  const crowdShareText = result.isUltraRare || !result.percentage || result.percentage < 0.0001 ? '< 0.0001%' : `${result.percentage}%`;
   ctx.fillStyle = '#0f172a';
   ctx.font = '800 36px system-ui, -apple-system, sans-serif';
   ctx.fillText(crowdShareText, rightTileX + 30, tileY + 92);
